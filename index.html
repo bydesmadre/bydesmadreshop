@@ -802,27 +802,27 @@ const tarjetas = {
   silencio: {
     titulo: '5 MINUTOS DE SILENCIO',
     desc: 'Absoluto. Sin voces. Sin TV. Sin preguntas.',
-    msg: '🤫 Cariño, necesito cobrarme esto 👉 https://bydesmadre.github.io/tarjeta-silencio'
+    msg: 'https://bydesmadre.github.io/bydesmadreshop/tarjeta-silencio\n\n🤫 Cariño, necesito cobrarme esto. Úsala bien.'
   },
   '30min': {
     titulo: '30 MINUTOS SOLA',
     desc: 'Sin dar explicaciones. Sin culpa. Sin nadie.',
-    msg: '⏱️ Cariño, necesito cobrarme esto 👉 https://bydesmadre.github.io/tarjeta-30min'
+    msg: 'https://bydesmadre.github.io/bydesmadreshop/tarjeta-30min\n\n⏱️ Cariño, necesito cobrarme esto. Úsala bien.'
   },
   cena: {
     titulo: 'NO PENSAR QUÉ HAY DE CENA',
     desc: 'Esta noche lo piensa otro. Yo paso.',
-    msg: '🍽️ Cariño, necesito cobrarme esto 👉 https://bydesmadre.github.io/tarjeta-cena'
+    msg: 'https://bydesmadre.github.io/bydesmadreshop/tarjeta-cena\n\n🍽️ Cariño, necesito cobrarme esto. Úsala bien.'
   },
   ducha: {
     titulo: 'UNA DUCHA DE MÁS DE 3 MINUTOS',
     desc: 'Agua caliente. Sin "maaaamáaaaa". Sin llamadas.',
-    msg: '🚿 Cariño, necesito cobrarme esto 👉 https://bydesmadre.github.io/tarjeta-ducha'
+    msg: 'https://bydesmadre.github.io/bydesmadreshop/tarjeta-ducha\n\n🚿 Cariño, necesito cobrarme esto. Úsala bien.'
   },
   cafe: {
     titulo: 'CAFÉ CALIENTE DE PRINCIPIO A FIN',
     desc: 'Sin recalentar. Sin interrupciones. Todo mío.',
-    msg: '☕ Cariño, necesito cobrarme esto 👉 https://bydesmadre.github.io/tarjeta-cafe'
+    msg: 'https://bydesmadre.github.io/bydesmadreshop/tarjeta-cafe\n\n☕ Cariño, necesito cobrarme esto. Úsala bien.'
   }
 };
 
@@ -868,7 +868,8 @@ function enviarForm() {
   }).catch(() => {});
 
   const t = tarjetas[tarjetaActual];
-  const waURL = 'https://wa.me/?text=' + encodeURIComponent(t.msg);
+  const texto = t.msg;
+  const waURL = 'https://wa.me/?text=' + encodeURIComponent(texto);
   document.getElementById('btn-whatsapp').href = waURL;
   document.getElementById('form-zone').style.display = 'none';
   document.getElementById('btn-whatsapp').classList.add('visible');
