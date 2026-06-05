@@ -592,15 +592,15 @@ body {
     </div>
   </div>
 
-  <div class="card agotado-card" data-cat="sueno">
-    <span class="badge agotado">Agotado 😭</span>
+  <div class="card" data-cat="sueno" onclick="abrirModal('sueno')">
+    <span class="badge nuevo">✨ Repuesto</span>
     <span class="emoji">😴</span>
     <div class="card-nombre">8 horas de sueño</div>
     <div class="card-desc">Sin interrupciones. Sin "mamá". Sin nada.</div>
     <div class="card-footer">
       <span class="precio-tachado">€999</span>
-      <span class="precio-gratis">agotado</span>
-      <button class="btn-ver" disabled>—</button>
+      <span class="precio-gratis">gratis 🎉</span>
+      <button class="btn-ver">Ver →</button>
     </div>
   </div>
 
@@ -799,6 +799,11 @@ body {
 
 <script>
 const tarjetas = {
+  sueno: {
+    titulo: '8 HORAS DE SUEÑO',
+    desc: 'Sin interrupciones. Sin "mamá". Sin nada.',
+    msg: 'https://bydesmadre.github.io/bydesmadreshop/tarjeta-sueno\n\n😴 Cariño, necesito cobrarme esto. Úsala bien.'
+  },
   silencio: {
     titulo: '5 MINUTOS DE SILENCIO',
     desc: 'Absoluto. Sin voces. Sin TV. Sin preguntas.',
