@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>8 Horas de Sueño — Bydesmadre</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Caveat:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --amarillo: #F4BE43;
+    --turquesa: #68A7A4;
+    --carbon: #5B524D;
+    --coral: #E0786A;
+    --mostaza: #AD984D;
+    --blanco: #F7F3EB;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #2a2a2a;
+    font-family: 'Archivo Black', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 24px 16px;
+    gap: 24px;
+  }
+
+  /* TARJETA PRINCIPAL */
+  .tarjeta {
+    width: 100%;
+    max-width: 420px;
+    background: var(--turquesa);
+    border: 4px solid var(--carbon);
+    padding: 0;
+    position: relative;
+    box-shadow: 8px 8px 0 var(--carbon);
+  }
+
+  /* CABECERA */
+  .tarjeta-header {
+    background: var(--carbon);
+    padding: 14px 20px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .tarjeta-header .logo-txt {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--amarillo);
+  }
+  .tarjeta-header .tipo {
+    font-family: 'Caveat', cursive;
+    font-size: 13px;
+    color: rgba(247,243,235,0.6);
+  }
+
+  /* CUERPO */
+  .tarjeta-body {
+    padding: 28px 24px 20px;
+  }
+
+  .emoji-grande {
+    font-size: 64px;
+    display: block;
+    margin-bottom: 8px;
+    line-height: 1;
+  }
+
+  .etiqueta {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(91,82,77,0.7);
+    margin-bottom: 6px;
+  }
+
+  .tarjeta-titulo {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 36px;
+    line-height: 0.9;
+    text-transform: uppercase;
+    color: var(--blanco);
+    letter-spacing: -1px;
+    margin-bottom: 16px;
+  }
+  .tarjeta-titulo span {
+    color: var(--amarillo);
+  }
+
+  /* DETALLES */
+  .detalles {
+    margin-bottom: 20px;
+  }
+  .detalle {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .detalle .icono {
+    font-size: 14px;
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+  .detalle p {
+    font-family: 'Caveat', cursive;
+    font-size: 18px;
+    color: var(--blanco);
+    line-height: 1.2;
+  }
+
+  /* SEPARADOR */
+  .separador {
+    border: none;
+    border-top: 2px dashed rgba(247,243,235,0.3);
+    margin: 20px 0;
+  }
+
+  /* SELLO */
+  .sello-zona {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .sello-texto {
+    font-family: 'Caveat', cursive;
+    font-size: 16px;
+    color: rgba(247,243,235,0.8);
+    line-height: 1.3;
+    flex: 1;
+    transform: rotate(-1.5deg);
+    display: inline-block;
+  }
+  .sello {
+    width: 88px;
+    height: 88px;
+    border: 3px solid var(--amarillo);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: transparent;
+    position: relative;
+  }
+  .sello::before {
+    content: '';
+    position: absolute;
+    inset: 5px;
+    border: 1.5px dashed rgba(244,190,67,0.5);
+    border-radius: 50%;
+  }
+  .sello .sello-linea1 {
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--amarillo);
+    text-align: center;
+  }
+  .sello .sello-num {
+    font-size: 24px;
+    color: var(--amarillo);
+    line-height: 1;
+  }
+  .sello .sello-linea2 {
+    font-family: 'Caveat', cursive;
+    font-size: 11px;
+    color: rgba(244,190,67,0.7);
+    text-align: center;
+  }
+
+  /* PIE */
+  .tarjeta-footer {
+    background: var(--carbon);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .tarjeta-footer .firmado {
+    font-family: 'Caveat', cursive;
+    font-size: 15px;
+    color: rgba(247,243,235,0.6);
+  }
+  .tarjeta-footer .firmado strong {
+    color: var(--amarillo);
+    font-style: normal;
+  }
+  .tarjeta-footer .valor {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: rgba(247,243,235,0.4);
+    text-transform: uppercase;
+    text-decoration: line-through;
+  }
+
+  /* SELLO COBRAR */
+  .cobrar-banda {
+    background: var(--coral);
+    padding: 12px 20px;
+    text-align: center;
+    border-top: 3px solid var(--carbon);
+  }
+  .cobrar-banda p {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: white;
+  }
+  .cobrar-banda .sub {
+    font-family: 'Caveat', cursive;
+    font-size: 14px;
+    letter-spacing: 0;
+    text-transform: none;
+    opacity: 0.85;
+    display: block;
+    margin-top: 2px;
+  }
+
+  /* INSTRUCCIONES DEBAJO */
+  .instrucciones {
+    width: 100%;
+    max-width: 420px;
+    background: var(--blanco);
+    border: 3px solid var(--carbon);
+    padding: 20px 20px 18px;
+    box-shadow: 6px 6px 0 rgba(91,82,77,0.3);
+  }
+  .instrucciones h3 {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(91,82,77,0.5);
+    margin-bottom: 12px;
+  }
+  .instrucciones ol {
+    list-style: none;
+    counter-reset: pasos;
+  }
+  .instrucciones li {
+    counter-increment: pasos;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .instrucciones li::before {
+    content: counter(pasos);
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 16px;
+    color: var(--turquesa);
+    flex-shrink: 0;
+    width: 22px;
+  }
+  .instrucciones li p {
+    font-family: 'Caveat', cursive;
+    font-size: 17px;
+    color: var(--carbon);
+    line-height: 1.3;
+  }
+  .instrucciones .nota {
+    font-family: 'Caveat', cursive;
+    font-size: 13px;
+    color: rgba(91,82,77,0.45);
+    margin-top: 12px;
+    line-height: 1.4;
+    border-top: 1px solid rgba(91,82,77,0.12);
+    padding-top: 10px;
+  }
+  .instrucciones .firma-final {
+    font-family: 'Caveat', cursive;
+    font-size: 15px;
+    color: var(--turquesa);
+    text-align: right;
+    margin-top: 8px;
+    transform: rotate(-1deg);
+    display: block;
+  }
+
+  @media print {
+    body { background: white; padding: 0; gap: 16px; }
+    .instrucciones { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TARJETA -->
+<div class="tarjeta">
+
+  <div class="tarjeta-header">
+    <span class="logo-txt">Bydesmadre</span>
+    <span class="tipo">Tarjeta de necesidad urgente</span>
+  </div>
+
+  <div class="tarjeta-body">
+    <span class="emoji-grande">😴</span>
+    <p class="etiqueta">Artículo de primera necesidad</p>
+    <h1 class="tarjeta-titulo">8 Horas<br>de <span>Sueño</span></h1>
+
+    <div class="detalles">
+      <div class="detalle">
+        <span class="icono">✓</span>
+        <p>Sin interrupciones. Ninguna.</p>
+      </div>
+      <div class="detalle">
+        <span class="icono">✓</span>
+        <p>Sin "mamá" a las 3am. En ningún idioma.</p>
+      </div>
+      <div class="detalle">
+        <span class="icono">✓</span>
+        <p>Sin despertador por pesadillas ajenas.</p>
+      </div>
+      <div class="detalle">
+        <span class="icono">✓</span>
+        <p>Sin fiebre misteriosa que sube a las 2am.</p>
+      </div>
+      <div class="detalle">
+        <span class="icono">✓</span>
+        <p>Con sábanas para mí sola. Las dos mitades.</p>
+      </div>
+    </div>
+
+    <hr class="separador">
+
+    <div class="sello-zona">
+      <p class="sello-texto">Cada noche<br>que dormiste mal,<br>te deben una.</p>
+      <div class="sello">
+        <span class="sello-linea1">valor</span>
+        <span class="sello-num">€999</span>
+        <span class="sello-linea2">ahora gratis</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cobrar-banda">
+    <p>Cóbratela cuando puedas</p>
+    <span class="sub">…o antes. Mucho mejor antes. 😤</span>
+  </div>
+
+  <div class="tarjeta-footer">
+    <span class="firmado">Firmado: <strong>Todas las madres del mundo</strong></span>
+    <span class="valor">PVP: €999,99</span>
+  </div>
+
+</div>
+
+<!-- INSTRUCCIONES -->
+<div class="instrucciones">
+  <h3>Cómo usar esta tarjeta</h3>
+  <ol>
+    <li><p>Imprime esta tarjeta (o enséñala en pantalla a quien toque).</p></li>
+    <li><p>Entregársela con calma. O con urgencia. Tú decides.</p></li>
+    <li><p>Decirle: <em>"Esta noche me toca a mí. Gráciaas."</em></p></li>
+    <li><p>Dormir. Las 8 horas. Sin culpa.</p></li>
+  </ol>
+  <p class="nota">* Esta tarjeta tiene validez indefinida. Se puede acumular. No caduca. No necesita condiciones especiales. Solo necesita que alguien la acepte. Si nadie la acepta, ponla en el frigorífico. Siempre funciona.</p>
+  <span class="firma-final">bydesmadre.com ✦ @bydesmadre</span>
+</div>
+
+</body>
+</html>
