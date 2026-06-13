@@ -697,5 +697,152 @@ function suscribirNewsletter(){
   alert("¡Bienvenida al desmadre! 🎉");
 }
 </script>
+  <style>
+.popup-overlay{
+  position:fixed;inset:0;background:rgba(26,22,18,.75);z-index:9999;
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s;
+}
+.popup-overlay.visible{opacity:1;visibility:visible;}
+.popup-box{
+  background:#F7F3EB;border:3px solid #1a1612;max-width:460px;width:100%;
+  padding:40px 36px 32px;position:relative;
+  transform:translateY(20px);transition:transform .35s;
+}
+.popup-overlay.visible .popup-box{transform:translateY(0);}
+.popup-cerrar{
+  position:absolute;top:14px;right:16px;background:none;border:none;
+  font-family:"Archivo Black",Arial,sans-serif;font-size:.75rem;
+  letter-spacing:1px;text-transform:uppercase;color:rgba(91,82,77,.4);
+  cursor:pointer;transition:color .15s;
+}
+.popup-cerrar:hover{color:#1a1612;}
+.popup-eyebrow{
+  font-family:"Archivo Black",Arial,sans-serif;font-size:.65rem;
+  letter-spacing:3px;text-transform:uppercase;color:rgba(91,82,77,.4);
+  display:block;margin-bottom:12px;
+}
+.popup-titulo{
+  font-family:"Archivo Black",Arial,sans-serif;
+  font-size:clamp(1.6rem,5vw,2.2rem);line-height:.92;
+  text-transform:uppercase;letter-spacing:-1.5px;color:#1a1612;margin-bottom:12px;
+}
+.popup-sub{
+  font-family:"Caveat",cursive;font-size:1.05rem;
+  color:#5B524D;line-height:1.4;margin-bottom:24px;
+}
+.popup-campo{
+  width:100%;padding:12px 14px;border:2px solid rgba(91,82,77,.25);
+  background:#fff;font-family:"DM Sans",Arial,sans-serif;font-size:.95rem;
+  color:#1a1612;outline:none;transition:border-color .2s;margin-bottom:10px;
+}
+.popup-campo:focus{border-color:#F4BE43;}
+.popup-campo::placeholder{color:rgba(91,82,77,.35);}
+.popup-btn{
+  width:100%;background:#1a1612;color:#F4BE43;
+  font-family:"Archivo Black",Arial,sans-serif;font-size:.78rem;
+  text-transform:uppercase;letter-spacing:2px;padding:15px 20px;
+  border:3px solid #1a1612;cursor:pointer;transition:background .15s,color .15s;margin-top:4px;
+}
+.popup-btn:hover{background:#F4BE43;color:#1a1612;}
+.popup-nota{
+  font-family:"Caveat",cursive;font-size:.88rem;
+  color:rgba(91,82,77,.45);text-align:center;margin-top:12px;
+}
+.popup-error{
+  font-family:"Caveat",cursive;font-size:.95rem;
+  color:#E0786A;margin-top:6px;display:none;
+}
+.popup-gracias{display:none;text-align:center;padding:8px 0;}
+.popup-gracias-emoji{font-size:2.8rem;display:block;margin-bottom:12px;}
+.popup-gracias-titulo{
+  font-family:"Archivo Black",Arial,sans-serif;font-size:1.5rem;
+  text-transform:uppercase;letter-spacing:-1px;color:#1a1612;margin-bottom:10px;
+}
+.popup-gracias-texto{
+  font-family:"Caveat",cursive;font-size:1.05rem;color:#5B524D;line-height:1.5;
+}
+@media(max-width:480px){
+  .popup-box{padding:32px 24px 28px;}
+}
+</style>
+
+<!-- OVERLAY -->
+<div class="popup-overlay" id="popupOverlay" role="dialog" aria-modal="true" aria-label="Suscríbete a bydesmadre">
+  <div class="popup-box">
+    <button class="popup-cerrar" onclick="cerrarPopup()" aria-label="Cerrar">✕ cerrar</button>
+
+    <!-- FORMULARIO -->
+    <div id="popup-form-zona">
+      <span class="popup-eyebrow">No te vayas sin esto</span>
+      <h2 class="popup-titulo">EL CAOS<br>TAMBIÉN<br>TIENE<br>NEWSLETTER.</h2>
+      <p class="popup-sub">Novedades, humor y cosas que nadie te cuenta.<br>Sin spam. Bueno, casi.</p>
+
+      <input class="popup-campo" type="text" id="popup-nombre" placeholder="Tu nombre">
+      <input class="popup-campo" type="email" id="popup-email" placeholder="Tu email (el de verdad)">
+      <p class="popup-error" id="popup-error">Revisa los datos e inténtalo de nuevo.</p>
+      <button class="popup-btn" onclick="enviarPopup()">QUIERO UNIRME AL DESMADRE</button>
+      <p class="popup-nota">Sin compromisos. Te puedes ir cuando quieras.*<br><span style="font-size:.78rem;opacity:.6;">* Como los juguetes del suelo.</span></p>
+    </div>
+
+    <!-- GRACIAS -->
+    <div class="popup-gracias" id="popup-gracias-zona">
+      <span class="popup-gracias-emoji">🎉</span>
+      <h3 class="popup-gracias-titulo">¡Ya eres una<br>de las nuestras!</h3>
+      <p class="popup-gracias-texto">En breve te llega un email de bienvenida.<br>Si no aparece, mira el spam.<br><span style="opacity:.5;">(También es un tipo de caos.)</span></p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  const SHEET_URL = "https://script.google.com/macros/s/AKfycbxhgykDjPodyqtLx-u__ctHKX5CdxdjB_AhPuIdK894n_Ples6E3CLJ8MuixZDxak2f/exec";
+  const KEY = "bydesmadre_popup_cerrada";
+
+  // Solo mostrar si no la ha visto antes
+  if (!localStorage.getItem(KEY)) {
+    setTimeout(function() {
+      document.getElementById("popupOverlay").classList.add("visible");
+    }, 3000);
+  }
+
+  window.cerrarPopup = function() {
+    document.getElementById("popupOverlay").classList.remove("visible");
+    localStorage.setItem(KEY, "1");
+  };
+
+  // Cerrar al clicar fuera
+  document.getElementById("popupOverlay").addEventListener("click", function(e) {
+    if (e.target === this) cerrarPopup();
+  });
+
+  // Cerrar con Escape
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape") cerrarPopup();
+  });
+
+  window.enviarPopup = function() {
+    const nombre = document.getElementById("popup-nombre").value.trim();
+    const email  = document.getElementById("popup-email").value.trim();
+    const error  = document.getElementById("popup-error");
+
+    if (!nombre) { error.textContent = "Ponme tu nombre 😊"; error.style.display = "block"; return; }
+    if (!email || !email.includes("@")) { error.textContent = "El email no parece correcto."; error.style.display = "block"; return; }
+
+    error.style.display = "none";
+
+    fetch(SHEET_URL, {
+      method: "POST", mode: "no-cors",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ nombre, email, tarjeta: "bienvenida", fecha: new Date().toISOString() })
+    }).catch(function(){});
+
+    document.getElementById("popup-form-zona").style.display = "none";
+    document.getElementById("popup-gracias-zona").style.display = "block";
+    localStorage.setItem(KEY, "1");
+  };
+})();
+</script>
 </body>
 </html>
