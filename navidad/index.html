@@ -1,0 +1,702 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#14213D">
+<title>Ayudemos al Grinch a encontrar el espíritu de la Navidad · @bydesmadre</title>
+<meta name="description" content="Una aventura navideña por el pueblo: cinco misiones escondidas para ayudar al Grinch a recuperar el espíritu de la Navidad.">
+<meta property="og:title" content="Ayudemos al Grinch a encontrar el espíritu de la Navidad">
+<meta property="og:description" content="Cinco misiones escondidas por el pueblo. ¿Te atreves a encontrarlas?">
+<meta property="og:image" content="img/portada-horizontal.webp">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/favicon.png">
+<link rel="stylesheet" href="lib/leaflet.css">
+<link rel="preload" href="fuentes/barlow-condensed-800.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:"Barlow Condensed";font-weight:600;font-display:swap;src:url(fuentes/barlow-condensed-600.woff2) format("woff2")}
+@font-face{font-family:"Barlow Condensed";font-weight:800;font-display:swap;src:url(fuentes/barlow-condensed-800.woff2) format("woff2")}
+@font-face{font-family:"Atkinson Hyperlegible";font-weight:400;font-display:swap;src:url(fuentes/atkinson-400.woff2) format("woff2")}
+@font-face{font-family:"Atkinson Hyperlegible";font-weight:700;font-display:swap;src:url(fuentes/atkinson-700.woff2) format("woff2")}
+:root{
+  --pared:#F3ECDF; --pared-2:#E9E0CF; --noche:#14213D; --tinta:#1B2438;
+  --spray:#5DBB2A; --spray-osc:#2F6E12; --rojo:#C8102E; --aviso:#F2C230; --blanco:#FFFFFF;
+  --titulos:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --texto:"Atkinson Hyperlegible",Verdana,Arial,sans-serif;
+  --safe-top:env(safe-area-inset-top,0px); --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;overflow-x:clip}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.c-siguiente .c-circulo,.marca-siguiente,.hoja{animation:none!important}.cinta-pista{animation-duration:60s}}
+body{margin:0;overflow-x:clip;background:var(--pared);color:var(--tinta);font-family:var(--texto);font-size:1.0625rem;line-height:1.55}
+img{max-width:100%;height:auto;display:block}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--aviso);outline-offset:3px;border-radius:4px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.envoltura{max-width:40rem;margin:0 auto;padding:0 1.25rem}
+
+/* Portada */
+.portada{position:relative;background:#F4EEE6}
+.portada-titulo{position:relative;z-index:1;padding:calc(1.6rem + var(--safe-top)) 1.25rem .4rem;text-align:center}
+.portada h1{margin:0;font-family:var(--titulos);font-weight:800;color:var(--noche);text-transform:uppercase;line-height:.92;letter-spacing:.01em}
+.portada h1 span{display:block}
+.h1-a{font-size:clamp(2.1rem,11vw,3.4rem)}
+.h1-b{font-size:clamp(5rem,30vw,8rem);color:var(--rojo);line-height:.82}
+.h1-c{font-size:clamp(1.45rem,7.4vw,2.3rem);margin-top:.2rem}
+.portada picture{display:block;margin-top:-14vw}
+.portada picture img{width:100%;height:auto;aspect-ratio:1000/1240;object-fit:cover;object-position:top;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 22%);mask-image:linear-gradient(to bottom,transparent 0,#000 22%)}
+@media (min-width:760px){.portada picture img{-webkit-mask-image:none;mask-image:none;aspect-ratio:auto}}
+.firma{position:absolute;right:1rem;bottom:1.4rem;font-family:var(--titulos);font-weight:600;font-size:1.05rem;color:var(--noche);background:rgba(243,236,223,.9);padding:.15rem .55rem;border-radius:4px;text-decoration:none}
+@media (min-width:760px){
+  .portada picture{margin-top:0}
+  .portada-titulo{position:absolute;inset:0 auto 0 0;width:48%;display:flex;flex-direction:column;justify-content:center;padding:2rem 0 2rem 4vw;text-align:left;z-index:1}
+  .h1-a{font-size:3.6vw}.h1-b{font-size:11vw}.h1-c{font-size:2.4vw}
+}
+
+/* Cinta de aviso en movimiento */
+.cinta-marco{overflow:hidden;margin-top:-1.1rem;padding:.5rem 0;position:relative;z-index:2}
+.cinta{background:var(--aviso);transform:rotate(-1.4deg);margin:0 -3%;overflow:hidden;
+  border-top:9px solid transparent;border-bottom:9px solid transparent;
+  border-image:repeating-linear-gradient(135deg,var(--noche) 0 12px,var(--aviso) 12px 24px) 9}
+.cinta-pista{display:flex;width:max-content;animation:desliza 22s linear infinite}
+.cinta-pista span{font-family:var(--titulos);font-weight:800;text-transform:uppercase;font-size:1.25rem;letter-spacing:.03em;color:var(--noche);padding:.45rem 0;white-space:nowrap}
+.cinta-pista span::after{content:"";display:inline-block;width:.55rem;height:.55rem;background:var(--rojo);border-radius:50%;margin:0 1.2rem;vertical-align:middle}
+@keyframes desliza{to{transform:translateX(-50%)}}
+
+/* Fila de candados, como en el cartel */
+.candados{display:flex;justify-content:center;gap:clamp(.4rem,2.5vw,1.2rem);padding:1.6rem 1rem .4rem;list-style:none;margin:0}
+.candados button{background:none;border:0;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:.35rem;font:inherit;color:inherit}
+.c-circulo{width:clamp(3.1rem,15vw,4.4rem);height:clamp(3.1rem,15vw,4.4rem);border-radius:50%;background:var(--noche);display:grid;place-items:center;transition:background .3s,transform .3s}
+.c-circulo svg{width:52%;height:52%}
+.c-num{font-family:var(--titulos);font-weight:800;font-size:clamp(.8rem,3.4vw,1rem);color:var(--noche);text-transform:uppercase;white-space:nowrap}
+.c-siguiente .c-circulo{background:var(--rojo);animation:tiembla 2.6s ease-in-out infinite}
+.c-abierta .c-circulo{background:var(--aviso)}
+.c-cumplida .c-circulo{background:var(--spray)}
+@keyframes tiembla{0%,70%,100%{transform:rotate(0)}75%{transform:rotate(-12deg)}80%{transform:rotate(10deg)}85%{transform:rotate(-7deg)}90%{transform:rotate(5deg)}}
+@keyframes abre{0%{transform:scale(1)}40%{transform:scale(1.25) rotate(-8deg)}100%{transform:scale(1)}}
+.c-recien .c-circulo{animation:abre .7s ease-out}
+
+/* Mapa */
+.mapa{height:22rem;border-radius:12px;overflow:hidden;border:3px solid var(--noche);background:var(--pared-2);position:relative;z-index:0}
+.mapa-aviso{padding:1rem;text-align:center}
+.marca{width:2.6rem;height:2.6rem;border-radius:50%;display:grid;place-items:center;font-family:var(--titulos);font-weight:800;font-size:1.3rem;color:var(--blanco);border:3px solid var(--blanco);box-shadow:0 2px 6px rgba(20,33,61,.4)}
+.marca-siguiente{background:var(--rojo);animation:late 1.6s ease-in-out infinite}
+.marca-cumplida{background:var(--spray-osc)}
+.marca-abierta{background:var(--aviso);color:var(--noche)}
+@keyframes late{50%{transform:scale(1.18)}}
+.leaflet-popup-content{font-family:var(--texto);font-size:.95rem}
+.leaflet-popup-content strong{font-family:var(--titulos);font-size:1.15rem;display:block}
+.leaflet-popup-content a{color:var(--rojo);font-weight:700}
+.leyenda{display:flex;flex-wrap:wrap;gap:.4rem 1rem;font-size:.9rem;margin-top:.7rem}
+.leyenda span::before{content:"";display:inline-block;width:.8rem;height:.8rem;border-radius:50%;margin-right:.35rem;vertical-align:-1px}
+.l-sig::before{background:var(--rojo)}.l-cum::before{background:var(--spray-osc)}
+
+section{padding:2.2rem 0}
+h2{font-family:var(--titulos);font-weight:800;font-size:2.1rem;line-height:1;margin:0 0 1rem;color:var(--noche);text-transform:uppercase}
+.subrayado{display:block;width:9rem;height:auto;margin:-.4rem 0 1.2rem}
+p{margin:0 0 1rem}
+.historia p:first-of-type{font-size:1.2rem}
+.pista-inicio{background:var(--noche);color:var(--blanco);border-radius:10px;padding:1rem 1.1rem;margin:0 0 1rem}
+.pista-inicio strong{display:block;font-family:var(--titulos);font-weight:800;font-size:1.35rem;text-transform:uppercase;color:var(--aviso)}
+
+/* Cómo se juega */
+.pasos{list-style:none;margin:0;padding:0;counter-reset:paso}
+.pasos li{counter-increment:paso;display:grid;grid-template-columns:2.6rem 1fr;gap:.9rem;align-items:start;margin-bottom:1rem}
+.pasos li::before{content:counter(paso);font-family:var(--titulos);font-weight:800;font-size:1.6rem;width:2.6rem;height:2.6rem;border-radius:50%;background:var(--noche);color:var(--aviso);display:grid;place-items:center}
+.pasos strong{display:block;font-size:1.1rem}
+
+/* Poste de señales */
+.poste{position:relative;list-style:none;margin:1.5rem 0 0;padding:0}
+.poste::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:14px;margin-left:-7px;background:linear-gradient(90deg,#9aa0a6,#d9dde1 45%,#8b9196);border-radius:3px}
+.poste li{position:relative;margin:0 0 1.6rem}
+.senal{width:100%;background:none;border:0;padding:0;cursor:pointer;font:inherit;color:inherit;display:block;text-align:center}
+.senal-img{position:relative;width:min(64%,260px);margin:0 auto;transition:transform .2s}
+.senal:active .senal-img{transform:scale(.97)}
+.senal-img img{width:100%;height:auto;filter:drop-shadow(0 6px 10px rgba(20,33,61,.25))}
+.bloqueada:not(.siguiente) .senal-img img{filter:grayscale(1) contrast(.85) brightness(1.05) drop-shadow(0 6px 10px rgba(20,33,61,.2));opacity:.55}
+.candado{position:absolute;left:50%;top:50%;width:4.2rem;height:4.2rem;margin:-2.1rem 0 0 -2.1rem;border-radius:50%;background:var(--noche);display:grid;place-items:center;box-shadow:0 0 0 4px var(--pared)}
+.candado svg{width:2rem;height:2rem}
+.disponible .candado,.cumplida .candado{display:none}
+.siguiente .candado{background:var(--rojo)}
+.siguiente .etiqueta{background:var(--rojo)}
+.sello{position:absolute;right:4%;top:2%;background:var(--spray);color:var(--blanco);font-family:var(--titulos);font-weight:800;font-size:1rem;text-transform:uppercase;padding:.3rem .7rem;border-radius:999px;transform:rotate(8deg);display:none}
+.cumplida .sello{display:block}
+.etiqueta{display:inline-block;margin-top:.6rem;background:var(--noche);color:var(--blanco);font-family:var(--titulos);font-weight:600;font-size:1.15rem;padding:.35rem .9rem;border-radius:6px;position:relative;z-index:1}
+.disponible .etiqueta{background:var(--rojo)}
+.cumplida .etiqueta{background:var(--spray-osc)}
+.etiqueta small{display:block;font-family:var(--texto);font-weight:400;font-size:.85rem;opacity:.9}
+
+/* Código */
+.codigo{background:var(--noche);color:var(--blanco)}
+.codigo h2{color:var(--aviso)}
+.form-codigo{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem}
+.form-codigo input{flex:1 1 12rem;min-width:0;font-family:var(--titulos);font-weight:800;font-size:1.6rem;letter-spacing:.08em;text-transform:uppercase;padding:.7rem .9rem;border-radius:8px;border:3px solid var(--blanco);background:var(--blanco);color:var(--noche)}
+.form-codigo input:focus{border-color:var(--aviso);outline:none}
+.boton{font-family:var(--titulos);font-weight:800;font-size:1.35rem;text-transform:uppercase;border:0;border-radius:8px;padding:.8rem 1.3rem;cursor:pointer;background:var(--spray);color:var(--noche);min-height:3.2rem}
+.boton:active{transform:translateY(1px)}
+.boton-rojo{background:var(--rojo);color:var(--blanco)}
+.boton-claro{background:var(--pared-2);color:var(--noche)}
+.mensaje{margin-top:1rem;min-height:1.5rem;font-size:1rem}
+.mensaje.error{color:#FFB4B4}
+.nota{font-size:.92rem;opacity:.85;margin-top:1.2rem}
+
+/* Buzón */
+.galeria{display:grid;grid-template-columns:repeat(auto-fill,minmax(9rem,1fr));gap:.8rem;margin-top:1rem}
+.galeria figure{margin:0;background:var(--blanco);padding:.45rem .45rem .2rem;border-radius:4px;box-shadow:0 2px 6px rgba(20,33,61,.15)}
+.galeria figure:nth-child(odd){transform:rotate(-1.5deg)}
+.galeria figure:nth-child(even){transform:rotate(1.2deg)}
+.galeria img{width:100%;aspect-ratio:3/4;object-fit:cover}
+.galeria figcaption{font-size:.85rem;text-align:center;padding:.25rem 0}
+.vacio{background:var(--blanco);border:2px dashed var(--pared-2);border-radius:8px;padding:1.2rem;text-align:center}
+
+/* Fechas */
+.fechas{background:var(--pared-2)}
+.fechas dl{margin:0;display:grid;gap:.9rem}
+.fechas dt{font-family:var(--titulos);font-weight:800;font-size:1.3rem;color:var(--rojo);text-transform:uppercase}
+.fechas dd{margin:0}
+
+footer{background:var(--noche);color:var(--blanco);text-align:center;padding:2rem 1.25rem calc(2rem + var(--safe-bottom));font-size:.95rem}
+footer a{color:var(--aviso)}
+footer img{width:4.5rem;margin:0 auto .6rem}
+.reiniciar{margin-top:1.2rem;background:none;border:1px solid rgba(255,255,255,.4);color:var(--blanco);font:inherit;font-size:.85rem;border-radius:6px;padding:.4rem .8rem;cursor:pointer}
+.reiniciar.confirmar{background:var(--rojo);border-color:var(--rojo)}
+
+/* Enviar foto */
+.foto{background:var(--blanco);border:3px dashed var(--spray);border-radius:12px;padding:1.1rem;margin-top:1.2rem}
+.foto h3{font-family:var(--titulos);font-weight:800;font-size:1.5rem;text-transform:uppercase;color:var(--noche);margin:0 0 .3rem}
+.foto label{display:block;font-size:.95rem;margin:.7rem 0 .25rem}
+.foto input[type=text]{width:100%;font:inherit;padding:.6rem .7rem;border:2px solid var(--pared-2);border-radius:8px}
+.foto input[type=file]{width:100%;font-size:.95rem}
+.foto .permiso{display:flex;gap:.6rem;align-items:flex-start;font-size:.9rem;margin-top:.9rem}
+.foto .permiso input{width:1.4rem;height:1.4rem;flex:none;margin-top:.1rem;accent-color:var(--spray-osc)}
+.foto .boton{width:100%;margin-top:.9rem}
+.foto .estado{font-size:.95rem;margin:.6rem 0 0;min-height:1.2rem}
+.foto .estado.ok{color:var(--spray-osc);font-weight:700}
+.foto .estado.error{color:var(--rojo);font-weight:700}
+.foto small{display:block;font-size:.82rem;opacity:.8;margin-top:.6rem}
+.insta{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--pared-2);font-size:.98rem}
+.insta button{font:inherit;font-weight:700;background:var(--pared-2);border:0;border-radius:6px;padding:.35rem .7rem;cursor:pointer;margin-left:.3rem}
+
+/* Pantalla de misión */
+.pantalla{position:fixed;inset:0;z-index:50;background:rgba(20,33,61,.6);display:flex;align-items:flex-end;justify-content:center}
+.pantalla[hidden]{display:none}
+.hoja{background:var(--pared);width:100%;max-width:36rem;max-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;border-radius:16px 16px 0 0;padding-bottom:calc(1.5rem + var(--safe-bottom));animation:sube .28s ease-out}
+@keyframes sube{from{transform:translateY(30px);opacity:.4}to{transform:none;opacity:1}}
+@media (min-width:760px){.pantalla{align-items:center;padding:2rem}.hoja{border-radius:16px;max-height:calc(100% - 4rem)}}
+.hoja-cerrar{position:sticky;top:0;display:flex;justify-content:flex-end;align-items:flex-start;padding:0 .7rem;z-index:3;height:0;overflow:visible}
+.hoja-cerrar button{margin-top:calc(.7rem + var(--safe-top));box-shadow:0 0 0 3px rgba(243,236,223,.8)}
+.hoja-cerrar button{width:2.8rem;height:2.8rem;border-radius:50%;border:0;background:var(--noche);color:var(--blanco);font-size:1.5rem;cursor:pointer;line-height:1}
+.hoja-img{width:100%;height:auto;border-radius:16px 16px 0 0}
+.hoja-cuerpo{padding:1.3rem 1.25rem 0}
+.hoja-cuerpo .num{font-family:var(--titulos);font-weight:600;font-size:1.15rem;color:var(--rojo);margin:0 0 .2rem}
+.hoja-cuerpo h2{font-size:2.2rem}
+.intro{font-size:1.15rem;font-style:italic}
+.instruccion{background:var(--blanco);border-left:6px solid var(--spray);padding:1rem;margin:1rem 0;border-radius:0 8px 8px 0}
+.instruccion strong{display:block;font-family:var(--titulos);font-size:1.25rem;text-transform:uppercase;color:var(--noche);margin-bottom:.3rem}
+.consejo{font-size:.98rem;padding-left:.2rem}
+.aviso-foto{background:var(--aviso);padding:.8rem 1rem;border-radius:8px;font-size:.95rem}
+.acciones{display:flex;flex-direction:column;gap:.7rem;margin-top:1.3rem}
+.pista{background:var(--noche);color:var(--blanco);border-radius:12px;padding:1.2rem;margin-top:1.2rem;text-align:center}
+.pista h3{font-family:var(--titulos);font-weight:800;font-size:1.6rem;text-transform:uppercase;color:var(--aviso);margin:0 0 .4rem}
+.pista img{width:min(60%,220px);margin:.8rem auto 0}
+.pista p{margin:0}
+.celebra{font-family:var(--titulos);font-weight:800;font-size:2.4rem;text-transform:uppercase;color:var(--spray-osc);margin:.4rem 0 0;transform:rotate(-2deg)}
+</style>
+</head>
+<body>
+
+<header class="portada">
+  <div class="portada-titulo">
+    <h1><span class="h1-a">Ayudemos al</span><span class="h1-b">Grinch</span><span class="h1-c">a encontrar el<br>espíritu de la Navidad</span></h1>
+  </div>
+  <picture>
+    <source media="(min-width:760px)" srcset="img/portada-horizontal.webp" width="1600" height="900">
+    <img src="img/portada-vertical.webp" width="1000" height="1413" alt="Pared blanca con una pintada verde del Grinch. Un dibujo infantil tapa el «no» y ahora se lee «¡Sí a la Navidad!». Alrededor, un lazo verde, un calcetín decorado y un dibujo de un árbol.">
+  </picture>
+  <a class="firma" href="https://www.instagram.com/bydesmadre/">@bydesmadre</a>
+</header>
+
+<div class="cinta-marco" aria-hidden="true"><div class="cinta"><div class="cinta-pista">
+  <span>Aviso</span><span>Cinco misiones escondidas por el pueblo</span><span>¿Te atreves?</span><span>Aviso</span><span>Cinco misiones escondidas por el pueblo</span><span>¿Te atreves?</span>
+  <span>Aviso</span><span>Cinco misiones escondidas por el pueblo</span><span>¿Te atreves?</span><span>Aviso</span><span>Cinco misiones escondidas por el pueblo</span><span>¿Te atreves?</span>
+</div></div></div>
+<p class="sr">Cinco misiones escondidas por el pueblo.</p>
+<ul class="candados" id="candados" aria-label="Tus misiones"></ul>
+
+<main>
+  <section class="historia">
+    <div class="envoltura">
+      <h2>¿Qué ha pasado?</h2>
+      <img class="subrayado" src="img/subrayado.webp" alt="" width="900" height="200">
+      <p>El Grinch ha llenado el pueblo de pintadas contra la Navidad. Pero lo que le pasa en realidad es otra cosa: ha perdido el espíritu de la Navidad y no sabe cómo recuperarlo.</p>
+      <p>Necesita la ayuda de los niños y sus familias. Por el pueblo hay cinco señales saboteadas por él, y cada una esconde una misión.</p>
+    </div>
+  </section>
+
+  <section class="como">
+    <div class="envoltura">
+      <h2>Cómo se juega</h2>
+      <ol class="pasos">
+        <li><div><strong>Busca las señales</strong>Están repartidas por el pueblo. Detrás de cada una hay un código QR y un código para escribir.</div></li>
+        <li><div><strong>Desbloquea la misión</strong>Escanea el QR o escribe el código en esta página.</div></li>
+        <li><div><strong>Cúmplela y sigue</strong>Al terminar, te damos la pista de la siguiente señal. Las misiones van en orden: hasta que no acabas una, no se abre la siguiente.</div></li>
+      </ol>
+      <p class="nota" style="opacity:1">Un móvil por familia: así avanzáis todos juntos.</p>
+    </div>
+  </section>
+
+  <section class="misiones" id="misiones" aria-labelledby="t-misiones">
+    <div class="envoltura">
+      <h2 id="t-misiones">Las cinco señales</h2>
+      <div class="pista-inicio" id="pista-inicio" aria-live="polite"></div>
+      <ul class="poste" id="poste"></ul>
+    </div>
+  </section>
+
+  <section class="mapa-seccion" id="mapa-seccion" aria-labelledby="t-mapa">
+    <div class="envoltura">
+      <h2 id="t-mapa">El mapa del Grinch</h2>
+      <p>Aquí aparece la señal que te toca buscar. Las siguientes se irán mostrando a medida que cumplas misiones.</p>
+      <div class="mapa" id="mapa"><p class="mapa-aviso">Cargando el mapa…</p></div>
+      <div class="leyenda"><span class="l-sig">Tu próxima señal</span><span class="l-cum">Misiones cumplidas</span></div>
+    </div>
+  </section>
+
+  <section class="codigo" id="codigo">
+    <div class="envoltura">
+      <h2>¿Tienes un código?</h2>
+      <p>Si no puedes escanear el QR, escribe aquí el código que hay detrás de la señal.</p>
+      <form class="form-codigo" id="form-codigo" novalidate>
+        <label class="sr" for="campo-codigo">Código de misión</label>
+        <input id="campo-codigo" name="codigo" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Tu código" aria-describedby="mensaje-codigo">
+        <button class="boton" type="submit">Desbloquear</button>
+      </form>
+      <p class="mensaje" id="mensaje-codigo" role="status" aria-live="polite"></p>
+      <p class="nota">¿Has cambiado de móvil o se ha borrado tu avance? Escribe los códigos de las señales que ya habéis hecho, en orden, y lo recuperas.</p>
+    </div>
+  </section>
+
+  <section class="buzon" id="buzon">
+    <div class="envoltura">
+      <h2>El buzón del Grinch</h2>
+      <p>¿Quieres ver las felicitaciones que ha recibido el Grinch? Cada semana abrimos el buzón y subimos las nuevas.</p>
+      <button class="boton boton-rojo" type="button" id="abrir-buzon">Abrir el buzón</button>
+    </div>
+  </section>
+
+  <section class="fechas">
+    <div class="envoltura">
+      <h2>Fechas</h2>
+      <dl>
+        <div><dt>Hasta el 25 de diciembre</dt><dd>Puedes hacer las misiones.</dd></div>
+        <div><dt>Hasta el 6 de enero</dt><dd>Los dibujos, los lazos y los calcetines se quedan puestos.</dd></div>
+        <div><dt>7 de enero</dt><dd>Pasa por el parque a recoger tu calcetín y llévatelo de recuerdo.</dd></div>
+      </dl>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <img src="img/corona.webp" alt="" width="400" height="390">
+  <p>Una aventura navideña de <a href="https://www.instagram.com/bydesmadre/">@bydesmadre</a>.</p>
+  <p>¿Dudas o quieres que retiremos una felicitación? Escríbenos a <a href="mailto:bydesmadre@gmail.com">bydesmadre@gmail.com</a>.</p>
+  <button type="button" class="reiniciar" id="reiniciar">Empezar la aventura desde cero</button>
+</footer>
+
+<div class="pantalla" id="pantalla" hidden>
+  <div class="hoja" role="dialog" aria-modal="true" aria-labelledby="hoja-titulo" tabindex="-1" id="hoja">
+    <div class="hoja-cerrar"><button type="button" id="cerrar" aria-label="Cerrar">×</button></div>
+    <div id="hoja-contenido"></div>
+  </div>
+</div>
+
+<script src="lib/leaflet.js"></script>
+<script>
+/* ============================================================
+   CONFIGURACIÓN: lo único que hay que tocar
+   ============================================================ */
+const CONFIG = {
+  /* Códigos PROVISIONALES: cámbialos antes de imprimir las señales.
+     Mayúsculas o minúsculas da igual; se ignoran tildes, espacios y guiones. */
+  codigos: ["NIEVE24", "TURRON31", "ESTRELLA12", "CAMELLO06", "CASCABEL25"],
+
+  /* Pistas para encontrar cada señal. PENDIENTES de las ubicaciones. */
+  pistas: {
+    1: "Empieza en el parque, al lado del Covirán. El Grinch ha colgado allí su primera señal: búscala bien, que vigila a todo el que pasa.",
+    2: "Ve a la zona del Ayuntamiento. El Grinch quiere que la Navidad no entre ni por la puerta.",
+    3: "Busca en el aparcamiento del Sansis. Allí el Grinch le ha puesto un STOP a la Navidad.",
+    4: "Ve al parque de la tirolina, junto al consultorio médico. Por ahí dice el Grinch que no pasan los camellos.",
+    5: "Ve a la iglesia. El Grinch anda cerca y ha dejado allí su última señal. Lleva contigo tu calcetín y tu felicitación."
+  },
+
+
+
+  /* Coordenadas de cada señal [latitud, longitud]. PENDIENTES.
+     Cómo sacarlas: en Google Maps, mantén pulsado el sitio exacto y copia
+     los dos números que aparecen (por ejemplo 43.48410, -3.61230). */
+  ubicaciones: {
+    1: [43.48385, -3.61250],   /* parque junto al Covirán (aprox.) */
+    2: [43.47914, -3.61280],   /* zona del Ayuntamiento (aprox.) */
+    3: [43.48214, -3.61233],   /* aparcamiento del Sansis (exacta) */
+    4: [43.483179, -3.610353], /* parque de la tirolina (exacta) */
+    5: [43.48023, -3.61072]    /* iglesia de San Martín (aprox.) */
+  },
+
+  /* Coordenadas del árbol del Grinch y el buzón (parque). PENDIENTES.
+     Aparece en el mapa cuando se desbloquea la misión 5. */
+  arbol: [43.48410, -3.61228],   /* parque, junto a la bolera (aprox., de Street View) */
+
+  /* Centro del mapa: parque de Ajo (aproximado, sacado de Street View). */
+  centroMapa: [43.48410, -3.61228],
+
+  /* Dirección del script de Google que recibe las fotos de las misiones.
+     Vacía hasta que lo montemos: mientras tanto solo sale la opción de Instagram. */
+  fotosURL: "https://script.google.com/macros/s/AKfycbxbqY7K9dIbSFpbD0s2jMF-tvkM5PNYK88_lRHj6imUl2dNfMeHHJMFOSU-LpRSNz3gNA/exec",
+
+  /* Dirección del script de Google que devuelve las fotos del buzón.
+     Es el mismo script que el de las fotos: pon aquí la misma dirección.
+     Vacía hasta que lo montemos. */
+  galeriaURL: "https://script.google.com/macros/s/AKfycbxbqY7K9dIbSFpbD0s2jMF-tvkM5PNYK88_lRHj6imUl2dNfMeHHJMFOSU-LpRSNz3gNA/exec"
+};
+
+const MISIONES = [
+  { titulo: "Dibuja la Navidad en tu ventana",
+    intro: "El Grinch está vigilando las ventanas del pueblo. Vamos a darle algo que mirar.",
+    instruccion: "Haz un dibujo de Navidad, el que tú quieras, y pégalo por dentro de una ventana de casa, que se vea desde la calle.",
+    consejo: "Cuantas más ventanas con dibujos, menos pueblo le queda al Grinch para gruñir." },
+  { titulo: "Un lazo verde para tu casa",
+    intro: "El Grinch ha prohibido el paso a la Navidad. Un lazo verde le dice que en esta casa sí entra.",
+    instruccion: "Ata un lazo verde en tu puerta, tu verja, tu balcón o tu ventana, en un sitio que se vea desde la calle. Sirve cualquier tela, lana o cinta que tengas en casa.",
+    consejo: "Mejor de tela o de lana: el papel no aguanta la lluvia." },
+  { titulo: "Decora un calcetín para el Grinch",
+    intro: "El Grinch nunca ha tenido un calcetín por Navidad. Este año va a tener el tuyo.",
+    instruccion: "Coge un calcetín que ya no uses y decóralo como quieras: con rotuladores, lana, cintas o retales. Ponle tus iniciales o un dibujo tuyo para reconocerlo después.",
+    consejo: "Mejor sin pegamento, que con la lluvia se despega. Y guárdalo bien: lo necesitarás en la última misión." },
+  { titulo: "Escribe una felicitación al Grinch",
+    intro: "El Grinch dice que los camellos no pasan por aquí. Pues las felicitaciones van a llegarle igual.",
+    instruccion: "Escribe o dibuja una felicitación de Navidad para el Grinch. Fírmala solo con tu nombre, sin apellidos.",
+    consejo: "Guárdala junto a tu calcetín: las dos cosas irán contigo al parque.",
+    avisoFoto: "Las felicitaciones del buzón se fotografían y se publican en esta web. Si no quieres que salga la tuya, no hace falta echarla: la misión cuenta igual." },
+  { titulo: "Cuelga tu calcetín en el árbol del Grinch",
+    intro: "El Grinch está cerca. Ya casi lo tenemos.",
+    instruccion: "Ve al parque. Echa tu felicitación en el buzón del Grinch, en el panel que da a los columpios, y cuelga tu calcetín con una pinza en las cuerdas del árbol que está junto a la bolera.",
+    consejo: "Los calcetines se quedan hasta el 6 de enero. El 7 de enero puedes venir a recoger el tuyo." }
+];
+
+/* ============================================================ */
+const CLAVE = "ayudemos-al-grinch-v1";
+let progreso = { cumplidas: [], abiertas: [] };
+try { const g = JSON.parse(localStorage.getItem(CLAVE)); if (g && Array.isArray(g.cumplidas)) progreso = g; } catch (e) {}
+function guardar(){ try { localStorage.setItem(CLAVE, JSON.stringify(progreso)); } catch (e) {} }
+
+const normal = s => (s || "").toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+const cumplida = n => progreso.cumplidas.includes(n);
+const abierta = n => progreso.abiertas.includes(n) || cumplida(n);
+const siguientePendiente = () => { for (let n = 1; n <= 5; n++) if (!cumplida(n)) return n; return null; };
+const puedeAbrir = n => n === 1 || cumplida(n - 1);
+
+const CANDADO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 10 0v3" fill="none" stroke="#F2C230" stroke-width="2.4" stroke-linecap="round"/><rect x="4.5" y="10" width="15" height="11" rx="2.5" fill="#F2C230"/></svg>';
+
+function pintarTodo(){ pintarPoste(); pintarCandados(); pintarMapa(); }
+function pintarPoste(){
+  const poste = document.getElementById("poste");
+  poste.innerHTML = "";
+  MISIONES.forEach((m, i) => {
+    const n = i + 1;
+    const estado = cumplida(n) ? "cumplida" : abierta(n) ? "disponible" : puedeAbrir(n) ? "bloqueada siguiente" : "bloqueada";
+    const texto = estado === "cumplida" ? m.titulo : estado === "disponible" ? m.titulo : "Misión secreta";
+    const sub = estado === "cumplida" ? "Cumplida. Toca para verla" : estado === "disponible" ? "Desbloqueada. Toca para verla" : estado.includes("siguiente") ? "Tu próxima señal: búscala por el pueblo" : "Bloqueada hasta cumplir la anterior";
+    const li = document.createElement("li");
+    li.innerHTML = `<button type="button" class="senal ${estado}" data-n="${n}" aria-label="Misión ${n}: ${texto}. ${sub}">
+      <div class="senal-img"><img src="img/senal-${n}.webp" alt="" width="560" height="560" loading="lazy"><span class="candado">${CANDADO}</span><span class="sello">Cumplida</span></div>
+      <span class="etiqueta">Misión ${n}: ${texto}<small>${sub}</small></span></button>`;
+    poste.appendChild(li);
+  });
+  const p = siguientePendiente();
+  const caja = document.getElementById("pista-inicio");
+  if (p === null) caja.innerHTML = "<strong>¡Misiones cumplidas!</strong>Gracias por ayudar al Grinch.";
+  else if (abierta(p)) caja.innerHTML = `<strong>Tienes la misión ${p} abierta</strong>Tócala en el poste para verla.`;
+  else caja.innerHTML = `<strong>Busca la señal ${p}</strong>${CONFIG.pistas[p]}`;
+}
+
+/* --- Fila de candados --- */
+const LLAVE_CERRADA = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 10 0v3" fill="none" stroke="#F3ECDF" stroke-width="2.6" stroke-linecap="round"/><rect x="4.5" y="10" width="15" height="11" rx="2.5" fill="#F3ECDF"/></svg>';
+const LLAVE_ABIERTA = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 9.6-2" fill="none" stroke="#14213D" stroke-width="2.6" stroke-linecap="round"/><rect x="4.5" y="10" width="15" height="11" rx="2.5" fill="#14213D"/></svg>';
+const CHECK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+let recien = null;
+function pintarCandados(){
+  const ul = document.getElementById("candados"); ul.innerHTML = "";
+  for (let n = 1; n <= 5; n++){
+    const est = cumplida(n) ? "c-cumplida" : abierta(n) ? "c-abierta" : puedeAbrir(n) ? "c-siguiente" : "c-bloqueada";
+    const txt = { "c-cumplida":"cumplida", "c-abierta":"desbloqueada", "c-siguiente":"es tu próxima señal", "c-bloqueada":"bloqueada" }[est];
+    const li = document.createElement("li");
+    li.innerHTML = `<button type="button" class="${est}${recien === n ? " c-recien" : ""}" data-n="${n}" aria-label="Misión ${n}, ${txt}"><span class="c-circulo">${est === "c-cumplida" ? CHECK : est === "c-abierta" ? LLAVE_ABIERTA : LLAVE_CERRADA}</span><span class="c-num">Misión 0${n}</span></button>`;
+    ul.appendChild(li);
+  }
+  recien = null;
+}
+document.getElementById("candados").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  const n = +b.dataset.n;
+  if (abierta(n)) verMision(n);
+  else document.getElementById("misiones").scrollIntoView({ behavior: "smooth" });
+});
+
+/* --- Mapa --- */
+let mapa = null, capa = null;
+function pintarMapa(){
+  const caja = document.getElementById("mapa");
+  if (typeof L === "undefined") { caja.innerHTML = '<p class="mapa-aviso">El mapa no se ha podido cargar. Usa las pistas de cada misión.</p>'; return; }
+  if (!mapa){
+    caja.innerHTML = "";
+    mapa = L.map(caja, { scrollWheelZoom: false, tap: true }).setView(CONFIG.centroMapa, 16);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(mapa);
+    capa = L.layerGroup().addTo(mapa);
+  }
+  capa.clearLayers();
+  const puntos = [];
+  for (let n = 1; n <= 5; n++){
+    const pos = CONFIG.ubicaciones[n];
+    if (!pos) continue;
+    const est = cumplida(n) ? "cumplida" : abierta(n) ? "abierta" : puedeAbrir(n) ? "siguiente" : null;
+    if (!est) continue; /* las señales futuras no se muestran: así no se estropea la búsqueda */
+    const icono = L.divIcon({ className: "", html: `<div class="marca marca-${est}">${est === "cumplida" ? "✓" : n}</div>`, iconSize: [42, 42], iconAnchor: [21, 21] });
+    const texto = est === "cumplida" ? "Misión cumplida" : CONFIG.pistas[n];
+    L.marker(pos, { icon: icono, title: `Señal ${n}` }).addTo(capa)
+      .bindPopup(`<strong>Señal ${n}</strong>${texto}<br><a href="https://www.google.com/maps/dir/?api=1&destination=${pos[0]},${pos[1]}&travelmode=walking" target="_blank" rel="noopener">Cómo llegar andando</a>`);
+    puntos.push(pos);
+  }
+  if (CONFIG.arbol && abierta(5)){
+    const icA = L.divIcon({ className: "", html: `<div class="marca ${cumplida(5) ? "marca-cumplida" : "marca-siguiente"}">★</div>`, iconSize: [42, 42], iconAnchor: [21, 21] });
+    L.marker(CONFIG.arbol, { icon: icA, title: "Árbol del Grinch y buzón" }).addTo(capa)
+      .bindPopup(`<strong>Árbol del Grinch y buzón</strong>Cuelga aquí tu calcetín y echa tu felicitación.<br><a href="https://www.google.com/maps/dir/?api=1&destination=${CONFIG.arbol[0]},${CONFIG.arbol[1]}&travelmode=walking" target="_blank" rel="noopener">Cómo llegar andando</a>`);
+    puntos.push(CONFIG.arbol);
+  }
+  if (puntos.length > 1) mapa.fitBounds(puntos, { padding: [40, 40], maxZoom: 17 });
+  else if (puntos.length === 1) mapa.setView(puntos[0], 17);
+}
+
+/* --- Pantalla --- */
+const pantalla = document.getElementById("pantalla");
+const hoja = document.getElementById("hoja");
+const contenido = document.getElementById("hoja-contenido");
+let ultimoFoco = null;
+function abrirPantalla(html){
+  ultimoFoco = document.activeElement;
+  contenido.innerHTML = html;
+  pantalla.hidden = false;
+  document.body.style.overflow = "hidden";
+  hoja.scrollTop = 0;
+  hoja.focus();
+}
+function cerrarPantalla(){
+  pantalla.hidden = true;
+  document.body.style.overflow = "";
+  if (ultimoFoco) ultimoFoco.focus();
+}
+document.getElementById("cerrar").addEventListener("click", cerrarPantalla);
+pantalla.addEventListener("click", e => { if (e.target === pantalla) cerrarPantalla(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !pantalla.hidden) cerrarPantalla(); });
+
+function verMision(n){
+  const m = MISIONES[n - 1];
+  const hecha = cumplida(n);
+  abrirPantalla(`
+    <img class="hoja-img" src="img/mision-${n}.webp" alt="" width="900" height="900">
+    <div class="hoja-cuerpo">
+      <p class="num">Misión ${n} de 5</p>
+      <h2 id="hoja-titulo">${m.titulo}</h2>
+      <p class="intro">${m.intro}</p>
+      <div class="instruccion"><strong>Tu misión</strong>${m.instruccion}</div>
+      <p class="consejo">${m.consejo}</p>
+      ${m.avisoFoto ? `<p class="aviso-foto">${m.avisoFoto}</p>` : ""}
+      <div id="zona-accion">${hecha ? pistaHTML(n) : `<div class="acciones"><button class="boton boton-rojo" type="button" id="btn-cumplida">¡Misión cumplida!</button><button class="boton boton-claro" type="button" id="btn-luego">La hago luego</button></div>`}</div>
+    </div>`);
+  if (!hecha){
+    document.getElementById("btn-cumplida").addEventListener("click", () => marcarCumplida(n));
+    document.getElementById("btn-luego").addEventListener("click", cerrarPantalla);
+  } else enlazarPista(n);
+}
+
+function fotoHTML(n){
+  const subir = CONFIG.fotosURL ? `
+      <label for="foto-archivo">Elige la foto</label>
+      <input id="foto-archivo" type="file" accept="image/*">
+      <label for="foto-nombre">Nombre (solo el nombre de pila, opcional)</label>
+      <input id="foto-nombre" type="text" maxlength="30" autocomplete="off">
+      <label class="permiso"><input id="foto-permiso" type="checkbox"><span>Soy el padre, la madre o el tutor y doy permiso a @bydesmadre para publicar esta foto en esta web y en Instagram.</span></label>
+      <button class="boton" type="button" id="foto-enviar">Enviar foto</button>
+      <p class="estado" id="foto-estado" role="status" aria-live="polite"></p>
+      <small>Mejor fotos sin caras de niños y sin números de portal. Revisamos todas antes de publicarlas. Si quieres que retiremos una, escríbenos a bydesmadre@gmail.com.</small>` : "";
+  return `<div class="foto"><h3>¡Mándanos tu foto!</h3><p style="margin:0">Queremos ver cómo has ayudado al Grinch en la misión ${n}. Es opcional, y no hace falta que sea ahora: puedes volver cuando quieras tocando el candado de esta misión.</p>${subir}
+    <p class="insta">${CONFIG.fotosURL ? "O súbela" : "Súbela"} a Instagram con <strong>#AyudemosAlGrinch</strong> y menciona a <strong>@bydesmadre</strong>.<button type="button" id="copiar-hashtag">Copiar</button></p></div>`;
+}
+function reducir(archivo){
+  return new Promise((ok, mal) => {
+    const img = new Image(); const url = URL.createObjectURL(archivo);
+    img.onload = () => {
+      const max = 1600, k = Math.min(1, max / Math.max(img.width, img.height));
+      const c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+      ok(c.toDataURL("image/jpeg", 0.82).split(",")[1]);
+    };
+    img.onerror = () => mal(new Error("imagen")); img.src = url;
+  });
+}
+function enlazarFoto(n){
+  const cp = document.getElementById("copiar-hashtag");
+  if (cp) cp.addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText("#AyudemosAlGrinch @bydesmadre"); cp.textContent = "¡Copiado!"; } catch (e) { cp.textContent = "#AyudemosAlGrinch"; }
+  });
+  const env = document.getElementById("foto-enviar"); if (!env) return;
+  env.addEventListener("click", async () => {
+    const est = document.getElementById("foto-estado"), arch = document.getElementById("foto-archivo").files[0];
+    est.className = "estado";
+    if (!arch){ est.className = "estado error"; est.textContent = "Elige primero una foto."; return; }
+    if (!document.getElementById("foto-permiso").checked){ est.className = "estado error"; est.textContent = "Marca la casilla del permiso para poder enviarla."; return; }
+    env.disabled = true; est.textContent = "Enviando…";
+    try {
+      const datos = await reducir(arch);
+      const r = await fetch(CONFIG.fotosURL, { method: "POST", body: JSON.stringify({ mision: n, nombre: document.getElementById("foto-nombre").value.trim().slice(0, 30), permiso: true, imagen: datos }) });
+      const j = await r.json();
+      if (!j.ok) throw new Error("servidor");
+      est.className = "estado ok"; est.textContent = "¡Foto enviada! Gracias por ayudar al Grinch.";
+      document.getElementById("foto-archivo").value = "";
+    } catch (e) {
+      est.className = "estado error"; est.textContent = "No se ha podido enviar. Prueba otra vez o súbela a Instagram.";
+    } finally { env.disabled = false; }
+  });
+}
+
+function pistaHTML(n){
+  if (n === 5) return fotoHTML(n) + `<div class="acciones"><button class="boton" type="button" id="btn-final">Ver el final</button></div>`;
+  return fotoHTML(n) + `<div class="pista"><h3>Siguiente señal</h3><p>${CONFIG.pistas[n + 1]}</p><img src="img/senal-${n + 1}.webp" alt="Señal de la misión ${n + 1}" width="560" height="560"></div>
+    <div class="acciones"><button class="boton" type="button" id="btn-vale">Entendido</button></div>`;
+}
+function enlazarPista(n){
+  enlazarFoto(n);
+  const f = document.getElementById("btn-final"); if (f) f.addEventListener("click", verFinal);
+  const v = document.getElementById("btn-vale"); if (v) v.addEventListener("click", cerrarPantalla);
+}
+
+function marcarCumplida(n){
+  if (!cumplida(n)) progreso.cumplidas.push(n);
+  recien = n; guardar(); pintarTodo();
+  if (n === 5) { verFinal(); return; }
+  document.getElementById("zona-accion").innerHTML = `<p class="celebra">¡Misión cumplida!</p>` + pistaHTML(n);
+  enlazarPista(n);
+  document.getElementById("zona-accion").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function verFinal(){
+  abrirPantalla(`
+    <img class="hoja-img" src="img/final.webp" alt="Un árbol del parque rodeado de cuerdas llenas de calcetines decorados por niños." width="1000" height="1250">
+    <div class="hoja-cuerpo">
+      <p class="celebra">¡Lo habéis conseguido!</p>
+      <h2 id="hoja-titulo">El Grinch ha encontrado el espíritu de la Navidad</h2>
+      <p class="intro">Estaba en cada ventana, en cada lazo y en cada calcetín de este pueblo.</p>
+      <p>Gracias por ayudarle. Pasa por el árbol de vez en cuando: cada día tiene más calcetines.</p>
+      <p>El 7 de enero puedes recoger el tuyo y llevártelo de recuerdo.</p>
+      ${fotoHTML(5)}
+      <div class="acciones"><button class="boton" type="button" id="btn-buzon">Ver el buzón del Grinch</button></div>
+    </div>`);
+  document.getElementById("btn-buzon").addEventListener("click", abrirBuzon);
+  enlazarFoto(5);
+}
+
+function avisoOrden(n, p){
+  abrirPantalla(`
+    <img class="hoja-img" src="img/senal-${n}.webp" alt="" width="560" height="560" style="width:60%;margin:2.5rem auto 0;border-radius:0">
+    <div class="hoja-cuerpo">
+      <p class="num">Has encontrado la señal ${n}</p>
+      <h2 id="hoja-titulo">Todavía no, el Grinch es muy suyo</h2>
+      <p>Las misiones van en orden. Antes de esta tienes que cumplir la misión ${p}.</p>
+      <div class="pista"><h3>Busca la señal ${p}</h3><p>${CONFIG.pistas[p]}</p><img src="img/senal-${p}.webp" alt="Señal de la misión ${p}" width="560" height="560"></div>
+      <div class="acciones"><button class="boton" type="button" id="btn-vale2">Entendido</button></div>
+    </div>`);
+  document.getElementById("btn-vale2").addEventListener("click", cerrarPantalla);
+}
+
+/* --- Códigos --- */
+function usarCodigo(valor, desdeQR){
+  const msg = document.getElementById("mensaje-codigo");
+  msg.className = "mensaje"; msg.textContent = "";
+  const c = normal(valor);
+  if (!c){ msg.className = "mensaje error"; msg.textContent = "Escribe el código que hay detrás de la señal."; return; }
+  const n = CONFIG.codigos.map(normal).indexOf(c) + 1;
+  if (!n){ msg.className = "mensaje error"; msg.textContent = "Ese código no existe. Revisa que esté bien escrito: lo tienes en la parte de atrás de la señal."; return; }
+  if (abierta(n)) { verMision(n); return; }
+  if (!puedeAbrir(n)) { avisoOrden(n, siguientePendiente()); return; }
+  progreso.abiertas.push(n); recien = n; guardar(); pintarTodo();
+  if (!desdeQR) { msg.textContent = `Misión ${n} desbloqueada.`; document.getElementById("campo-codigo").value = ""; }
+  verMision(n);
+}
+document.getElementById("form-codigo").addEventListener("submit", e => {
+  e.preventDefault(); usarCodigo(document.getElementById("campo-codigo").value, false);
+});
+document.getElementById("campo-codigo").addEventListener("input", () => {
+  const msg = document.getElementById("mensaje-codigo"); if (msg.classList.contains("error")) { msg.className = "mensaje"; msg.textContent = ""; }
+});
+document.getElementById("poste").addEventListener("click", e => {
+  const b = e.target.closest(".senal"); if (!b) return;
+  const n = +b.dataset.n;
+  if (abierta(n)) verMision(n);
+  else if (!puedeAbrir(n)) avisoOrden(n, siguientePendiente());
+  else {
+    const msg = document.getElementById("mensaje-codigo");
+    msg.className = "mensaje"; msg.textContent = `Para abrir la misión ${n}, busca su señal y escanea el QR o escribe su código aquí.`;
+    document.getElementById("codigo").scrollIntoView({ behavior: "smooth" });
+    setTimeout(() => document.getElementById("campo-codigo").focus({ preventScroll: true }), 400);
+  }
+});
+
+/* --- Galería del buzón (solo se carga al abrirla) --- */
+async function abrirBuzon(){
+  abrirPantalla(`<div class="hoja-cuerpo" style="padding-top:2.2rem">
+      <p class="num">Correo del Grinch</p>
+      <h2 id="hoja-titulo">El buzón del Grinch</h2>
+      <p>Estas son las felicitaciones que ha recibido. Cada semana abrimos el buzón y subimos las nuevas.</p>
+      <div id="galeria" class="galeria"><p class="vacio" style="grid-column:1/-1">Abriendo el buzón…</p></div>
+    </div>`);
+  const g = document.getElementById("galeria");
+  const vacio = () => { g.innerHTML = `<p class="vacio" style="grid-column:1/-1">El buzón todavía está vacío. ¿Quién será el primero en escribirle?</p>`; };
+  if (!CONFIG.galeriaURL) return vacio();
+  try {
+    const r = await fetch(CONFIG.galeriaURL); const fotos = await r.json();
+    if (!Array.isArray(fotos) || !fotos.length) return vacio();
+    g.innerHTML = fotos.map(f => `<figure><img src="${f.src}" alt="Felicitación para el Grinch${f.nombre ? " de " + f.nombre : ""}" loading="lazy">${f.nombre ? `<figcaption>${f.nombre}</figcaption>` : ""}</figure>`).join("");
+  } catch (e) { g.innerHTML = `<p class="vacio" style="grid-column:1/-1">No se ha podido abrir el buzón. Prueba otra vez en un rato.</p>`; }
+}
+document.getElementById("abrir-buzon").addEventListener("click", abrirBuzon);
+
+/* --- Empezar de cero (dos toques, para no borrarlo sin querer) --- */
+(function(){
+  const b = document.getElementById("reiniciar"); let armado = false, t = null;
+  b.addEventListener("click", () => {
+    if (!armado){ armado = true; b.classList.add("confirmar"); b.textContent = "¿Seguro? Se borra tu avance. Pulsa otra vez"; t = setTimeout(() => { armado = false; b.classList.remove("confirmar"); b.textContent = "Empezar la aventura desde cero"; }, 5000); return; }
+    clearTimeout(t);
+    try { localStorage.removeItem(CLAVE); } catch (e) {}
+    progreso = { cumplidas: [], abiertas: [] };
+    armado = false; b.classList.remove("confirmar"); b.textContent = "Empezar la aventura desde cero";
+    pintarTodo(); window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+})();
+
+/* --- Arranque --- */
+pintarTodo();
+const params = new URLSearchParams(location.search);
+if (params.has("reiniciar")) {
+  try { localStorage.removeItem(CLAVE); } catch (e) {}
+  progreso = { cumplidas: [], abiertas: [] };
+  history.replaceState(null, "", location.pathname);
+  pintarTodo();
+}
+const qr = params.get("c");
+if (qr) {
+  history.replaceState(null, "", location.pathname + location.hash);
+  usarCodigo(qr, true);
+}
+</script>
+</body>
+</html>
