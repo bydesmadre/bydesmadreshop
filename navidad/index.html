@@ -467,7 +467,7 @@ function pintarMapa(){
   if (CONFIG.arbol && abierta(3)){
     const fin = cumplida(5);
     const icA = L.divIcon({ className: "", html: `<div class="marca ${fin || cumplida(3) ? "marca-cumplida" : "marca-siguiente"}">★</div>`, iconSize: [42, 42], iconAnchor: [21, 21] });
-    const txtA = fin ? "El 25 de diciembre ven al olivo, cerca del buzón, y busca tu deseo." : "Aquí está el buzón del Grinch, en el panel que da a los columpios.";
+    const txtA = fin ? "A partir del 25 de diciembre, busca tu deseo en el olivo, cerca del buzón." : "Aquí está el buzón del Grinch, en el panel que da a los columpios.";
     L.marker(CONFIG.arbol, { icon: icA, title: "Buzón del Grinch" }).addTo(capa)
       .bindPopup(`<strong>Buzón del Grinch</strong>${txtA}<br><a href="https://www.google.com/maps/dir/?api=1&destination=${CONFIG.arbol[0]},${CONFIG.arbol[1]}&travelmode=walking" target="_blank" rel="noopener">Cómo llegar andando</a>`);
     puntos.push(CONFIG.arbol);
@@ -685,7 +685,7 @@ function verFinal(celebra){
     <div class="hoja-cuerpo">
       <h2 id="hoja-titulo" class="celebra" style="font-size:2.6rem">¡Lo has conseguido!</h2>
       <p class="intro">Gracias a tu ayuda, el Grinch ha recuperado el espíritu de la Navidad.</p>
-      <div class="instruccion"><strong>25 de diciembre</strong>Ve al olivo del parque, cerca del buzón, y busca tu deseo.</div>
+      <div class="instruccion"><strong>A partir del 25 de diciembre</strong>Ve al olivo del parque, cerca del buzón, y busca tu deseo. Antes de esa fecha no lo encontrarás: el Grinch todavía los está preparando.</div>
       <div class="acciones"><button class="boton" type="button" id="btn-buzon">Ver el buzón del Grinch</button><button class="boton boton-claro" type="button" id="btn-celebrar">¡Celebrarlo otra vez! 🎉</button></div>
     </div>`);
   document.getElementById("btn-buzon").addEventListener("click", abrirBuzon);
