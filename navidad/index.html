@@ -289,9 +289,8 @@ footer img{width:4.5rem;margin:0 auto .6rem}
     <div class="envoltura">
       <h2>Fechas</h2>
       <dl>
-        <div><dt>Hasta el 25 de diciembre</dt><dd>Puedes hacer las misiones.</dd></div>
-        <div><dt>Hasta el 6 de enero</dt><dd>Todo lo que hagáis durante la aventura se queda en el pueblo, para que luzca toda la Navidad.</dd></div>
-        <div><dt>7 de enero</dt><dd>Fin de la aventura. Al llegar a la última misión te contamos cómo llevarte tu recuerdo.</dd></div>
+        <div><dt>Hasta el 20 de diciembre</dt><dd>Puedes hacer las misiones y enviar tu deseo.</dd></div>
+        <div><dt>25 de diciembre</dt><dd>El gran final. Lo descubrirás al terminar la aventura.</dd></div>
       </dl>
     </div>
   </section>
@@ -327,7 +326,7 @@ const CONFIG = {
     2: "Ve a la zona del Ayuntamiento. El Grinch quiere que la Navidad no entre ni por la puerta.",
     3: "Busca en el aparcamiento del Sansis. Allí el Grinch le ha puesto un STOP a la Navidad.",
     4: "Ve al parque de la tirolina, junto al consultorio médico. Por ahí dice el Grinch que no pasan los camellos.",
-    5: "Ve a la iglesia. El Grinch anda cerca y ha dejado allí su última señal. Lleva contigo tu calcetín y tu felicitación."
+    5: "Ve a la iglesia. El Grinch anda cerca y ha dejado allí su última señal."
   },
 
 
@@ -361,27 +360,25 @@ const CONFIG = {
 };
 
 const MISIONES = [
-  { titulo: "Dibuja la Navidad en tu ventana",
-    intro: "El Grinch está vigilando las ventanas del pueblo. Vamos a darle algo que mirar.",
-    instruccion: "Haz un dibujo de Navidad, el que tú quieras, y pégalo por dentro de una ventana de casa, que se vea desde la calle.",
-    consejo: "Cuantas más ventanas con dibujos, menos pueblo le queda al Grinch para gruñir." },
+  { titulo: "Llena tu ventana de Navidad",
+    intro: "El Grinch está vigilando las ventanas del pueblo.",
+    instruccion: "Pon en la tuya, que se vea desde la calle, un dibujo navideño o un cartel hecho por vosotros con un mensaje para el Grinch.",
+    consejo: "Pégalo por dentro del cristal, así aguanta la lluvia. Cuantas más ventanas con Navidad, menos pueblo le queda al Grinch para gruñir." },
   { titulo: "Un lazo verde para tu casa",
     intro: "El Grinch ha prohibido el paso a la Navidad. Un lazo verde le dice que en esta casa sí entra.",
     instruccion: "Ata un lazo verde en tu puerta, tu verja, tu balcón o tu ventana, en un sitio que se vea desde la calle. Sirve cualquier tela, lana o cinta que tengas en casa.",
     consejo: "Mejor de tela o de lana: el papel no aguanta la lluvia." },
-  { titulo: "Decora un calcetín para el Grinch",
-    intro: "El Grinch nunca ha tenido un calcetín por Navidad. Este año va a tener el tuyo.",
-    instruccion: "Coge un calcetín que ya no uses y decóralo como quieras: con rotuladores, lana, cintas o retales. Ponle tus iniciales o un dibujo tuyo para reconocerlo después.",
-    consejo: "Mejor sin pegamento, que con la lluvia se despega. Y guárdalo bien: lo necesitarás en la última misión." },
-  { titulo: "Escribe una felicitación al Grinch",
-    intro: "El Grinch dice que los camellos no pasan por aquí. Pues las felicitaciones van a llegarle igual.",
-    instruccion: "Escribe o dibuja una felicitación de Navidad para el Grinch. Fírmala solo con tu nombre, sin apellidos.",
-    consejo: "Guárdala junto a tu calcetín: las dos cosas irán contigo al parque.",
-    avisoFoto: "Las felicitaciones del buzón se fotografían y se publican en esta web. Si no quieres que salga la tuya, no hace falta echarla: la misión cuenta igual." },
-  { titulo: "Cuelga tu calcetín en el árbol del Grinch",
-    intro: "El Grinch está cerca. Ya casi lo tenemos.",
-    instruccion: "Ve al parque. Echa tu felicitación en el buzón del Grinch, en el panel que da a los columpios, y cuelga tu calcetín con una pinza en las cuerdas del árbol que está junto a la bolera.",
-    consejo: "Los calcetines se quedan hasta el 6 de enero. El 7 de enero puedes venir a recoger el tuyo." }
+  { titulo: "Un regalo para el Grinch",
+    intro: "El Grinch nunca ha recibido un regalo. ¿Le preparas uno?",
+    instruccion: "Prepárale algo que le guste: un dibujo, un chiste, una carta, un poema, una manualidad… lo que tú quieras. Échalo en el buzón del Grinch, en el parque, en el panel que da a los columpios.",
+    consejo: "Que sea de papel o cartulina y quepa por la ranura. Si eres muy pequeño, un garabato también es un regalo.",
+    avisoFoto: "Los regalos del buzón se fotografían y se publican en esta web. Fírmalo solo con tu nombre, sin apellidos." },
+  { titulo: "Tu deseo para 2027",
+    intro: "El Grinch está empezando a entender la Navidad. Ahora quiere saber qué deseáis para el año que viene.",
+    instruccion: "Escribe aquí tu deseo para 2027. Si eres pequeño, díselo a un mayor y que lo escriba por ti.",
+    consejo: "Puedes enviar tu deseo hasta el 20 de diciembre. Escribe solo tu nombre de pila, sin apellidos. Revisamos todos los deseos, y puede que el Grinch los comparta con todo el pueblo." },
+  { titulo: "¡El Grinch está cerca!",
+    intro: "", instruccion: "", consejo: "" }
 ];
 
 /* ============================================================ */
@@ -398,7 +395,7 @@ const puedeAbrir = n => n === 1 || cumplida(n - 1);
 
 const CANDADO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 10 0v3" fill="none" stroke="#F2C230" stroke-width="2.4" stroke-linecap="round"/><rect x="4.5" y="10" width="15" height="11" rx="2.5" fill="#F2C230"/></svg>';
 
-function pintarTodo(){ pintarPoste(); pintarCandados(); pintarMapa(); document.getElementById("buzon").hidden = !abierta(4); }
+function pintarTodo(){ pintarPoste(); pintarCandados(); pintarMapa(); document.getElementById("buzon").hidden = !abierta(3); }
 function pintarPoste(){
   const poste = document.getElementById("poste");
   poste.innerHTML = "";
@@ -467,10 +464,12 @@ function pintarMapa(){
       .bindPopup(`<strong>Señal ${n}</strong>${texto}<br><a href="https://www.google.com/maps/dir/?api=1&destination=${pos[0]},${pos[1]}&travelmode=walking" target="_blank" rel="noopener">Cómo llegar andando</a>`);
     puntos.push(pos);
   }
-  if (CONFIG.arbol && abierta(5)){
-    const icA = L.divIcon({ className: "", html: `<div class="marca ${cumplida(5) ? "marca-cumplida" : "marca-siguiente"}">★</div>`, iconSize: [42, 42], iconAnchor: [21, 21] });
-    L.marker(CONFIG.arbol, { icon: icA, title: "Árbol del Grinch y buzón" }).addTo(capa)
-      .bindPopup(`<strong>Árbol del Grinch y buzón</strong>Cuelga aquí tu calcetín y echa tu felicitación.<br><a href="https://www.google.com/maps/dir/?api=1&destination=${CONFIG.arbol[0]},${CONFIG.arbol[1]}&travelmode=walking" target="_blank" rel="noopener">Cómo llegar andando</a>`);
+  if (CONFIG.arbol && abierta(3)){
+    const fin = cumplida(5);
+    const icA = L.divIcon({ className: "", html: `<div class="marca ${fin || cumplida(3) ? "marca-cumplida" : "marca-siguiente"}">★</div>`, iconSize: [42, 42], iconAnchor: [21, 21] });
+    const txtA = fin ? "El 25 de diciembre ven al olivo, cerca del buzón, y busca tu deseo." : "Aquí está el buzón del Grinch, en el panel que da a los columpios.";
+    L.marker(CONFIG.arbol, { icon: icA, title: "Buzón del Grinch" }).addTo(capa)
+      .bindPopup(`<strong>Buzón del Grinch</strong>${txtA}<br><a href="https://www.google.com/maps/dir/?api=1&destination=${CONFIG.arbol[0]},${CONFIG.arbol[1]}&travelmode=walking" target="_blank" rel="noopener">Cómo llegar andando</a>`);
     puntos.push(CONFIG.arbol);
   }
   if (puntos.length > 1) mapa.fitBounds(puntos, { padding: [40, 40], maxZoom: 17 });
@@ -500,6 +499,10 @@ pantalla.addEventListener("click", e => { if (e.target === pantalla) cerrarPanta
 document.addEventListener("keydown", e => { if (e.key === "Escape" && !pantalla.hidden) cerrarPantalla(); });
 
 function verMision(n){
+  if (n === 5){
+    if (!cumplida(5)) { progreso.cumplidas.push(5); recien = 5; guardar(); pintarTodo(); }
+    verFinal(); return;
+  }
   const m = MISIONES[n - 1];
   const hecha = cumplida(n);
   abrirPantalla(`
@@ -511,12 +514,50 @@ function verMision(n){
       <div class="instruccion"><strong>Tu misión</strong>${m.instruccion}</div>
       <p class="consejo">${m.consejo}</p>
       ${m.avisoFoto ? `<p class="aviso-foto">${m.avisoFoto}</p>` : ""}
-      <div id="zona-accion">${hecha ? pistaHTML(n) : `<div class="acciones"><button class="boton boton-rojo" type="button" id="btn-cumplida">¡Misión cumplida!</button><button class="boton boton-claro" type="button" id="btn-luego">La hago luego</button></div>`}</div>
+      <div id="zona-accion">${hecha ? pistaHTML(n) : n === 4 ? deseoHTML(false) + `<div class="acciones"><button class="boton boton-claro" type="button" id="btn-luego">Lo hago luego</button></div>` : `<div class="acciones"><button class="boton boton-rojo" type="button" id="btn-cumplida">¡Misión cumplida!</button><button class="boton boton-claro" type="button" id="btn-luego">La hago luego</button></div>`}</div>
     </div>`);
   if (!hecha){
-    document.getElementById("btn-cumplida").addEventListener("click", () => marcarCumplida(n));
+    if (n === 4) enlazarDeseo(true);
+    else document.getElementById("btn-cumplida").addEventListener("click", () => marcarCumplida(n));
     document.getElementById("btn-luego").addEventListener("click", cerrarPantalla);
   } else enlazarPista(n);
+}
+
+function deseoHTML(otro){
+  return `<div class="foto" id="caja-deseo"><h3>${otro ? "¿Hay más niños en casa?" : "Escribe tu deseo"}</h3>
+      ${otro ? '<p style="margin:0">Cada uno puede enviar su propio deseo.</p>' : ""}
+      <label for="deseo-nombre">Tu nombre (solo el nombre de pila)</label>
+      <input id="deseo-nombre" type="text" maxlength="30" autocomplete="off">
+      <label for="deseo-texto">Tu deseo para 2027</label>
+      <textarea id="deseo-texto" maxlength="150" rows="3" style="width:100%;font:inherit;padding:.6rem .7rem;border:2px solid var(--pared-2);border-radius:8px;resize:vertical"></textarea>
+      <small id="deseo-cuenta" style="text-align:right;margin-top:.2rem">0 / 150</small>
+      <button class="boton boton-rojo" type="button" id="deseo-enviar">Enviar mi deseo</button>
+      <p class="estado" id="deseo-estado" role="status" aria-live="polite"></p></div>`;
+}
+function enlazarDeseo(primera){
+  const txt = document.getElementById("deseo-texto"), cta = document.getElementById("deseo-cuenta");
+  if (!txt) return;
+  txt.addEventListener("input", () => { cta.textContent = `${txt.value.length} / 150`; });
+  const env = document.getElementById("deseo-enviar");
+  env.addEventListener("click", async () => {
+    const est = document.getElementById("deseo-estado");
+    const nombre = document.getElementById("deseo-nombre").value.trim(), deseo = txt.value.trim();
+    est.className = "estado";
+    if (!nombre){ est.className = "estado error"; est.textContent = "Escribe tu nombre."; return; }
+    if (!deseo){ est.className = "estado error"; est.textContent = "Escribe tu deseo."; return; }
+    if (!CONFIG.fotosURL){ est.className = "estado error"; est.textContent = "Ahora mismo no se pueden enviar deseos. Prueba más tarde."; return; }
+    env.disabled = true; est.textContent = "Enviando…";
+    try {
+      const r = await fetch(CONFIG.fotosURL, { method: "POST", body: JSON.stringify({ tipo: "deseo", nombre: nombre.slice(0, 30), deseo: deseo.slice(0, 150) }) });
+      const j = await r.json();
+      if (!j.ok) throw new Error("servidor");
+      if (primera) { marcarCumplida(4); return; }
+      est.className = "estado ok"; est.textContent = "¡Deseo enviado! El Grinch lo guardará en un sitio muy especial.";
+      document.getElementById("deseo-nombre").value = ""; txt.value = ""; cta.textContent = "0 / 150";
+    } catch (e) {
+      est.className = "estado error"; est.textContent = "No se ha podido enviar. Prueba otra vez en un rato.";
+    } finally { env.disabled = false; }
+  });
 }
 
 function fotoHTML(n){
@@ -571,11 +612,13 @@ function enlazarFoto(n){
 
 function pistaHTML(n){
   if (n === 5) return fotoHTML(n) + `<div class="acciones"><button class="boton" type="button" id="btn-final">Ver el final</button></div>`;
-  return fotoHTML(n) + `<div class="pista"><h3>Siguiente señal</h3><p>${CONFIG.pistas[n + 1]}</p><img src="img/senal-${n + 1}.webp" alt="Señal de la misión ${n + 1}" width="560" height="560"></div>
+  const extra = n <= 3 ? fotoHTML(n) : n === 4 ? deseoHTML(true) : "";
+  return extra + `<div class="pista"><h3>Siguiente señal</h3><p>${CONFIG.pistas[n + 1]}</p><img src="img/senal-${n + 1}.webp" alt="Señal de la misión ${n + 1}" width="560" height="560"></div>
     <div class="acciones"><button class="boton" type="button" id="btn-vale">Entendido</button></div>`;
 }
 function enlazarPista(n){
-  enlazarFoto(n);
+  if (n <= 3) enlazarFoto(n);
+  if (n === 4) enlazarDeseo(false);
   const f = document.getElementById("btn-final"); if (f) f.addEventListener("click", verFinal);
   const v = document.getElementById("btn-vale"); if (v) v.addEventListener("click", cerrarPantalla);
 }
@@ -584,25 +627,21 @@ function marcarCumplida(n){
   if (!cumplida(n)) progreso.cumplidas.push(n);
   recien = n; guardar(); pintarTodo();
   if (n === 5) { verFinal(); return; }
-  document.getElementById("zona-accion").innerHTML = `<p class="celebra">¡Misión cumplida!</p>` + pistaHTML(n);
+  document.getElementById("zona-accion").innerHTML = (n === 4 ? `<p class="celebra">¡Deseo enviado!</p><p>El Grinch lo guardará en un sitio muy especial.</p>` : `<p class="celebra">¡Misión cumplida!</p>`) + pistaHTML(n);
   enlazarPista(n);
   document.getElementById("zona-accion").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function verFinal(){
   abrirPantalla(`
-    <img class="hoja-img" src="img/final.webp" alt="Un árbol del parque rodeado de cuerdas llenas de calcetines decorados por niños." width="1000" height="1250">
+    <img class="hoja-img" src="img/final.webp" alt="Un olivo del parque decorado con bolas, luces y tarjetas colgadas con cintas rojas." width="1000" height="1250">
     <div class="hoja-cuerpo">
-      <p class="celebra">¡Lo habéis conseguido!</p>
-      <h2 id="hoja-titulo">El Grinch ha encontrado el espíritu de la Navidad</h2>
-      <p class="intro">Estaba en cada ventana, en cada lazo y en cada calcetín de este pueblo.</p>
-      <p>Gracias por ayudarle. Pasa por el árbol de vez en cuando: cada día tiene más calcetines.</p>
-      <p>El 7 de enero puedes recoger el tuyo y llevártelo de recuerdo.</p>
-      ${fotoHTML(5)}
+      <h2 id="hoja-titulo" class="celebra" style="font-size:2.6rem">¡Lo has conseguido!</h2>
+      <p class="intro">Gracias a tu ayuda, el Grinch ha recuperado el espíritu de la Navidad.</p>
+      <div class="instruccion"><strong>25 de diciembre</strong>Ve al olivo del parque, cerca del buzón, y busca tu deseo.</div>
       <div class="acciones"><button class="boton" type="button" id="btn-buzon">Ver el buzón del Grinch</button></div>
     </div>`);
   document.getElementById("btn-buzon").addEventListener("click", abrirBuzon);
-  enlazarFoto(5);
 }
 
 function avisoOrden(n, p){
