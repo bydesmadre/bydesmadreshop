@@ -362,7 +362,7 @@ const CONFIG = {
 const MISIONES = [
   { titulo: "Llena tu ventana de Navidad",
     intro: "El Grinch está vigilando las ventanas del pueblo.",
-    instruccion: "Pon en la tuya, que se vea desde la calle, un dibujo navideño o un cartel hecho por vosotros con un mensaje para el Grinch.",
+    instruccion: "Decora tu ventana con un dibujo navideño o un cartel hecho por vosotros con un mensaje para el Grinch, de forma que se vea desde la calle.",
     consejo: "Pégalo por dentro del cristal, así aguanta la lluvia. Cuantas más ventanas con Navidad, menos pueblo le queda al Grinch para gruñir." },
   { titulo: "Un lazo verde para tu casa",
     intro: "El Grinch ha prohibido el paso a la Navidad. Un lazo verde le dice que en esta casa sí entra.",
@@ -370,7 +370,7 @@ const MISIONES = [
     consejo: "Mejor de tela o de lana: el papel no aguanta la lluvia." },
   { titulo: "Un regalo para el Grinch",
     intro: "El Grinch nunca ha recibido un regalo. ¿Le preparas uno?",
-    instruccion: "Prepárale algo que le guste: un dibujo, un chiste, una carta, un poema, una manualidad… lo que tú quieras. Échalo en el buzón del Grinch, en el parque, en el panel que da a los columpios.",
+    instruccion: "Prepárale algo que le guste: un dibujo, un chiste, una carta, un poema… lo que tú quieras. Échalo en el buzón del Grinch, en el parque, en el panel que da a los columpios.",
     consejo: "Que sea de papel o cartulina y quepa por la ranura. Si eres muy pequeño, un garabato también es un regalo.",
     avisoFoto: "Los regalos del buzón se fotografían y se publican en esta web. Fírmalo solo con tu nombre, sin apellidos." },
   { titulo: "Tu deseo para 2027",
@@ -500,8 +500,9 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !pantalla.
 
 function verMision(n){
   if (n === 5){
-    if (!cumplida(5)) { progreso.cumplidas.push(5); recien = 5; guardar(); pintarTodo(); }
-    verFinal(); return;
+    const primera = !cumplida(5);
+    if (primera) { progreso.cumplidas.push(5); recien = 5; guardar(); pintarTodo(); }
+    verFinal(primera); return;
   }
   const m = MISIONES[n - 1];
   const hecha = cumplida(n);
@@ -632,16 +633,64 @@ function marcarCumplida(n){
   document.getElementById("zona-accion").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-function verFinal(){
+/* --- Celebración final: confeti y música --- */
+function confeti(){
+  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const c = document.createElement("canvas");
+  c.style.cssText = "position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:80";
+  document.body.appendChild(c);
+  const ctx = c.getContext("2d"), dpr = window.devicePixelRatio || 1;
+  const W = c.width = innerWidth * dpr, H = c.height = innerHeight * dpr;
+  const colores = ["#5DBB2A", "#C8102E", "#F2C230", "#F6EFDF", "#2F6E12"];
+  const piezas = Array.from({ length: 160 }, () => ({
+    x: W / 2 + (Math.random() - .5) * W * .3, y: H * .35,
+    vx: (Math.random() - .5) * 18 * dpr, vy: (-Math.random() * 16 - 6) * dpr,
+    t: (6 + Math.random() * 8) * dpr, r: Math.random() * 6.28, vr: (Math.random() - .5) * .4,
+    col: colores[Math.floor(Math.random() * colores.length)], forma: Math.random() < .3 ? "circulo" : "papel" }));
+  const inicio = performance.now();
+  (function paso(ahora){
+    const tt = ahora - inicio; ctx.clearRect(0, 0, W, H);
+    piezas.forEach(p => {
+      p.vy += .45 * dpr; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.fillStyle = p.col;
+      ctx.globalAlpha = Math.max(0, 1 - Math.max(0, tt - 2800) / 1200);
+      if (p.forma === "circulo") { ctx.beginPath(); ctx.arc(0, 0, p.t / 2, 0, 6.28); ctx.fill(); }
+      else ctx.fillRect(-p.t / 2, -p.t / 4, p.t, p.t / 2);
+      ctx.restore();
+    });
+    if (tt < 4000) requestAnimationFrame(paso); else c.remove();
+  })(inicio);
+}
+let audioCtx = null;
+function musica(){
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    const t0 = audioCtx.currentTime + .05;
+    /* pequeña fanfarria de campanillas */
+    [[784,0],[988,.12],[1175,.24],[1568,.36],[1175,.62],[1568,.74],[2093,.86]].forEach(([f, d]) => {
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.type = "triangle"; o.frequency.value = f;
+      g.gain.setValueAtTime(0, t0 + d); g.gain.linearRampToValueAtTime(.18, t0 + d + .01);
+      g.gain.exponentialRampToValueAtTime(.001, t0 + d + .9);
+      o.connect(g).connect(audioCtx.destination); o.start(t0 + d); o.stop(t0 + d + 1);
+    });
+  } catch (e) {}
+}
+function celebrar(){ confeti(); musica(); }
+
+function verFinal(celebra){
   abrirPantalla(`
     <img class="hoja-img" src="img/final.webp" alt="Un olivo del parque decorado con bolas, luces y tarjetas colgadas con cintas rojas." width="1000" height="1250">
     <div class="hoja-cuerpo">
       <h2 id="hoja-titulo" class="celebra" style="font-size:2.6rem">¡Lo has conseguido!</h2>
       <p class="intro">Gracias a tu ayuda, el Grinch ha recuperado el espíritu de la Navidad.</p>
       <div class="instruccion"><strong>25 de diciembre</strong>Ve al olivo del parque, cerca del buzón, y busca tu deseo.</div>
-      <div class="acciones"><button class="boton" type="button" id="btn-buzon">Ver el buzón del Grinch</button></div>
+      <div class="acciones"><button class="boton" type="button" id="btn-buzon">Ver el buzón del Grinch</button><button class="boton boton-claro" type="button" id="btn-celebrar">¡Celebrarlo otra vez! 🎉</button></div>
     </div>`);
   document.getElementById("btn-buzon").addEventListener("click", abrirBuzon);
+  document.getElementById("btn-celebrar").addEventListener("click", celebrar);
+  if (celebra) setTimeout(celebrar, 350);
 }
 
 function avisoOrden(n, p){
